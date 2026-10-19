@@ -1,6 +1,6 @@
 # NestMate
 
-NestMate is a fresh Flutter prototype for a hostel resident and warden portal. It uses Cupertino widgets, adaptive light/dark semantic colors, and mock data behind repository interfaces. No existing prototype was present in this checkout; this implementation does not replace or modify one.
+NestMate is a fresh Flutter prototype for a VIT Chennai-inspired hostel resident and warden portal. It uses the VIT Chennai campus photo and logo supplied for this design, VIT navy-and-gold styling, Cupertino-native interactions, adaptive light/dark palettes, and mock data behind repository interfaces. It is a concept, not an official VIT app.
 
 ## Run
 
@@ -9,7 +9,9 @@ flutter pub get
 flutter run
 ```
 
-The account button switches between resident and warden views. All content is mock data; payment does not contact a bank and request submission does not contact a hostel.
+For a browser preview, run `flutter run -d chrome` (web support is included).
+
+Without Firebase configuration, the account button switches between resident and warden **demo views**; it is not authentication or access control. A persistent in-app notice identifies this mode and clarifies that demo requests and payments are not sent to real services. Configure Firebase Auth and Firestore as described in [docs/firebase-setup.md](docs/firebase-setup.md) to enable signed-in resident requests, warden custom-claim authorization, notices, menus, feedback, laundry requests, and read-only fee balances. Online payment is not configured.
 
 ## Verify
 

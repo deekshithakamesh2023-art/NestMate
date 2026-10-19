@@ -1,0 +1,112 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function warden() {
+      return signedIn() && request.auth.token.role == 'warden';
+    }
+
+    function ownsDocument() {
+      return signedIn() && resource.data.ownerId == request.auth.uid;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    match /requests/{requestId} {
+      allow read: if warden() || ownsDocument();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'ownerId', 'type', 'title', 'details', 'category', 'status',
+          'createdAt', 'departure', 'returnAt'
+        ])
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.status == 'submitted'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 120
+        && request.resource.data.details is string
+        && request.resource.data.details.size() > 0
+        && request.resource.data.details.size() <= 2000
+        && (
+          (
+            request.resource.data.type == 'complaint'
+            && request.resource.data.category in [
+              'maintenance', 'cleanliness', 'internet', 'safety', 'other'
+            ]
+            && !request.resource.data.keys().hasAny(['departure', 'returnAt'])
+          )
+          ||
+          (
+            request.resource.data.type == 'outpass'
+            && request.resource.data.keys().hasAll(['departure', 'returnAt'])
+            && request.resource.data.departure is timestamp
+            && request.resource.data.returnAt is timestamp
+            && request.resource.data.departure >= request.time - duration.value(1, 'd')
+            && request.resource.data.departure <= request.time + duration.value(30, 'd')
+            && request.resource.data.returnAt > request.resource.data.departure
+            && request.resource.data.returnAt <= request.resource.data.departure + duration.value(14, 'd')
+            && !request.resource.data.keys().hasAny(['category'])
+          )
+        );
+      allow update: if warden()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status', 'assignee', 'updatedAt'
+        ])
+        && request.resource.data.status in [
+          'submitted', 'inReview', 'inProgress', 'resolved', 'declined'
+        ]
+        && request.resource.data.assignee in [
+          'Facilities team', 'Housekeeping team', 'Warden on duty'
+        ]
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    match /menus/{dateId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /mealFeedback/{feedbackId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['ownerId', 'message', 'createdAt'])
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && request.resource.data.message.size() <= 2000
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+
+    match /laundryRequests/{requestId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['ownerId', 'instructions', 'createdAt'])
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.instructions is string
+        && request.resource.data.instructions.size() <= 500
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false;
+    }
+
+    match /notices/{noticeId} {
+      allow read: if signedIn() && resource.data.published == true;
+      allow write: if false;
+    }
+
+    match /feeAccounts/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
