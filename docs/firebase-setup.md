@@ -4,7 +4,7 @@ The app uses Firebase only when all required public client configuration values 
 
 ## Configure a project
 
-1. Create a Firebase project and register the Android, iOS, and/or Web apps you intend to run.
+1. The configured project is `webapp-666e2`, with its Web app client settings supplied in `lib/core/firebase_config.dart`. Register separate Firebase apps before targeting Android or iOS.
 2. Enable **Authentication → Email/Password**. Create resident accounts through an administrator-controlled process; the app intentionally has no public sign-up or role selector in Firebase mode.
 3. Create a Cloud Firestore database and deploy `firestore.rules`:
 
@@ -13,7 +13,7 @@ The app uses Firebase only when all required public client configuration values 
    ```
 
 4. Assign wardens the Firebase Auth custom claim `{ "role": "warden" }` using a trusted Admin SDK or Cloud Function. Never let a client write role claims or role fields. Residents need no elevated claim.
-5. Supply the Firebase **web app configuration** when launching or building:
+5. The Web app configuration is used by default. You can override its public values when launching or building:
 
    ```sh
    flutter run -d chrome \
@@ -24,7 +24,7 @@ The app uses Firebase only when all required public client configuration values 
      --dart-define=FIREBASE_AUTH_DOMAIN=YOUR_PROJECT_ID.firebaseapp.com
    ```
 
-   For a web release, pass the same defines to `flutter build web --release`. Firebase client configuration is not a secret; Firestore rules and Auth are the access controls. Do not add Admin SDK credentials, passwords, or private keys to `--dart-define`.
+   For a web release, pass the same defines to `flutter build web --release`. Firebase client configuration is not a secret; Firestore rules and Auth are the access controls. Restrict the API key to the required Firebase APIs in Google Cloud Console. Never add Admin SDK credentials, passwords, or private keys to `--dart-define`.
 
 The Firebase path authenticates with email/password, reads the warden custom claim from the ID token, stores resident requests/feedback/laundry actions in Firestore, and reads menus, published notices, and the signed-in user's fee account. Warden queue reads and updates are allowed only by the server rules to accounts with the `warden` custom claim. An account without that claim receives the resident view.
 
@@ -43,7 +43,7 @@ Online payment is deliberately unavailable in Firebase mode. Reading fee balance
 
 ## Scope and production checklist
 
-- This repo includes Android, iOS, and web app code, but Firebase app registration and native platform files have not been generated because no Firebase project was supplied. Firebase mode can be run on web with the configuration above; use FlutterFire CLI for native project registration/configuration as appropriate.
+- Firebase options currently target the registered Web app. Use FlutterFire CLI to register and configure separate Android/iOS apps before running Firebase mode on those platforms.
 - Configure authorized email domains, password policy, account recovery, App Check, backups, monitoring, retention, and least-privilege staff provisioning in the Firebase project.
 - Publish and test `firestore.rules` in the Firebase Emulator Suite before using real resident data. The local Flutter widget tests do not prove cloud rule enforcement.
 - Confirm hostel policy and retention for outpasses, complaint details, feedback, fees, and student identifiers before production.
