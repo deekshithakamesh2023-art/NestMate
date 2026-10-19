@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../core/design_tokens.dart';
+import '../core/widgets.dart';
 import '../data/firebase_repositories.dart';
 import '../data/repositories.dart';
 
@@ -137,92 +138,131 @@ class _SignInScreenState extends State<_SignInScreen> {
 
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
-        backgroundColor: context.canvas,
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 440),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Icon(
-                      CupertinoIcons.building_2_fill,
-                      color: Color(0xFF002147),
-                      size: 48,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Welcome to NestMate',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: context.primaryText,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Sign in with the account provided by your hostel.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: context.secondaryText),
-                    ),
-                    const SizedBox(height: 28),
-                    CupertinoTextField(
-                      controller: _email,
-                      placeholder: 'Email',
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.username],
-                      textInputAction: TextInputAction.next,
-                      padding: const EdgeInsets.all(16),
-                      decoration: _fieldDecoration(context),
-                    ),
-                    const SizedBox(height: 12),
-                    CupertinoTextField(
-                      controller: _password,
-                      placeholder: 'Password',
-                      obscureText: true,
-                      autofillHints: const [AutofillHints.password],
-                      onSubmitted: (_) => _signIn(),
-                      padding: const EdgeInsets.all(16),
-                      decoration: _fieldDecoration(context),
-                    ),
-                    if (_error != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: Semantics(
-                          liveRegion: true,
-                          child: Text(
-                            _error!,
-                            style: TextStyle(color: context.error),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 16),
-                    CupertinoButton.filled(
-                      minimumSize: const Size(0, 48),
-                      onPressed: _busy ? null : _signIn,
-                      child: _busy
-                          ? const CupertinoActivityIndicator(
-                              color: Color(0xFFFFFFFF),
-                            )
-                          : const Text('Sign in'),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Need an account? Ask your hostel administrator. Warden access is assigned by the server.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: context.secondaryText,
-                        fontSize: 13,
-                      ),
-                    ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/images/vit_chennai_login_background.png',
+              fit: BoxFit.cover,
+            ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0x66002147),
+                    Color(0x33002147),
+                    Color(0x99002147),
                   ],
                 ),
               ),
             ),
-          ),
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: Interactive3DSurface(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: context.canvas.withValues(alpha: .96),
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x44002147),
+                              blurRadius: 32,
+                              offset: Offset(0, 16),
+                            ),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(28),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Icon(
+                                CupertinoIcons.building_2_fill,
+                                color: Color(0xFF002147),
+                                size: 48,
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Welcome to NestMate',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: context.primaryText,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Sign in with the account provided by your hostel.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: context.secondaryText),
+                              ),
+                              const SizedBox(height: 28),
+                              CupertinoTextField(
+                                controller: _email,
+                                placeholder: 'Email',
+                                keyboardType: TextInputType.emailAddress,
+                                autofillHints: const [AutofillHints.username],
+                                textInputAction: TextInputAction.next,
+                                padding: const EdgeInsets.all(16),
+                                decoration: _fieldDecoration(context),
+                              ),
+                              const SizedBox(height: 12),
+                              CupertinoTextField(
+                                controller: _password,
+                                placeholder: 'Password',
+                                obscureText: true,
+                                autofillHints: const [AutofillHints.password],
+                                onSubmitted: (_) => _signIn(),
+                                padding: const EdgeInsets.all(16),
+                                decoration: _fieldDecoration(context),
+                              ),
+                              if (_error != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 12),
+                                  child: Semantics(
+                                    liveRegion: true,
+                                    child: Text(
+                                      _error!,
+                                      style: TextStyle(color: context.error),
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(height: 16),
+                              CupertinoButton.filled(
+                                minimumSize: const Size(0, 48),
+                                onPressed: _busy ? null : _signIn,
+                                child: _busy
+                                    ? const CupertinoActivityIndicator(
+                                        color: Color(0xFFFFFFFF),
+                                      )
+                                    : const Text('Sign in'),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Need an account? Ask your hostel administrator. Warden access is assigned by the server.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: context.secondaryText,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       );
 }
