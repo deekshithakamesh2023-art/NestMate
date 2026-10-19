@@ -25,6 +25,7 @@ abstract interface class NoticeRepository {
 }
 
 abstract interface class FeeRepository {
+  bool get supportsPayment;
   Future<FeeAccount> account();
   Future<void> payOutstanding();
 }
@@ -175,6 +176,9 @@ class MockPortalRepository
           date: DateTime(2026, 10, 15),
         ),
       ];
+
+  @override
+  bool get supportsPayment => true;
 
   @override
   Future<FeeAccount> account() async => FeeAccount(

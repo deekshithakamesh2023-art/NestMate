@@ -1,21 +1,64 @@
 import 'package:flutter/cupertino.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'core/design_tokens.dart';
+import 'core/firebase_config.dart';
+import 'core/widgets.dart';
 import 'data/repositories.dart';
+import 'features/firebase_portal_gate.dart';
 import 'features/resident_screens.dart';
 
-void main() => runApp(const NestMateApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (FirebaseConfig.hasAnyConfiguration && !FirebaseConfig.isConfigured) {
+    throw StateError(
+      'Firebase configuration is incomplete. Set FIREBASE_API_KEY, '
+      'FIREBASE_APP_ID, FIREBASE_MESSAGING_SENDER_ID, and FIREBASE_PROJECT_ID.',
+    );
+  }
+  if (FirebaseConfig.isConfigured) {
+    await Firebase.initializeApp(options: FirebaseConfig.options);
+  }
+  runApp(
+    FirebaseConfig.isConfigured
+        ? FirebasePortalGate(
+            portalBuilder: (repositories, isWarden, onSignOut, profileLabel) =>
+                NestMateApp(
+              repositories: repositories,
+              isWarden: isWarden,
+              demoMode: false,
+              onSignOut: onSignOut,
+              profileLabel: profileLabel,
+            ),
+          )
+        : const NestMateApp(),
+  );
+}
 
 class NestMateApp extends StatefulWidget {
-  const NestMateApp({super.key});
+  const NestMateApp({
+    this.repositories,
+    this.isWarden,
+    this.demoMode = true,
+    this.onSignOut,
+    this.profileLabel,
+    super.key,
+  });
+
+  final PortalRepositories? repositories;
+  final bool? isWarden;
+  final bool demoMode;
+  final VoidCallback? onSignOut;
+  final String? profileLabel;
 
   @override
   State<NestMateApp> createState() => _NestMateAppState();
 }
 
 class _NestMateAppState extends State<NestMateApp> {
-  final _repositories = PortalRepositories.mock();
-  bool _isWarden = false;
+  late final _repositories = widget.repositories ?? PortalRepositories.mock();
+  late bool _isWarden = widget.isWarden ?? false;
+  Brightness _brightness = Brightness.light;
   late final CupertinoTabController _tabController = CupertinoTabController();
 
   @override
@@ -27,15 +70,15 @@ class _NestMateAppState extends State<NestMateApp> {
   @override
   Widget build(BuildContext context) => CupertinoApp(
         debugShowCheckedModeBanner: false,
-        title: 'NestMate',
+        title: 'NestMate · VIT Hostel Life',
         theme: PortalTokens.theme(Brightness.light),
-        builder: (context, child) {
-          final brightness = MediaQuery.platformBrightnessOf(context);
-          return CupertinoTheme(
-            data: PortalTokens.theme(brightness),
+        builder: (context, child) => PortalEnvironment(
+          demoMode: widget.demoMode,
+          child: CupertinoTheme(
+            data: PortalTokens.theme(_brightness),
             child: child ?? const SizedBox.shrink(),
-          );
-        },
+          ),
+        ),
         home: CupertinoTabScaffold(
           controller: _tabController,
           tabBar: CupertinoTabBar(
@@ -91,7 +134,17 @@ class _NestMateAppState extends State<NestMateApp> {
       );
 
   Widget _buildTab(BuildContext context, int index) {
-    final account = _AccountButton(onSwitchRole: _switchRole);
+    final account = _AccountButton(
+      onSwitchRole: widget.demoMode ? _switchRole : null,
+      isDark: _brightness == Brightness.dark,
+      profileLabel: widget.profileLabel ??
+          'Demo account · Aanya Sharma · VIT Chennai · Room 204',
+      onSignOut: widget.onSignOut,
+      onToggleTheme: () => setState(
+        () => _brightness =
+            _brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+      ),
+    );
     return switch (index) {
       0 => HomeScreen(
           repositories: _repositories,
@@ -126,8 +179,18 @@ class _NestMateAppState extends State<NestMateApp> {
 }
 
 class _AccountButton extends StatelessWidget {
-  const _AccountButton({required this.onSwitchRole});
-  final ValueChanged<bool> onSwitchRole;
+  const _AccountButton({
+    required this.onSwitchRole,
+    required this.isDark,
+    required this.profileLabel,
+    required this.onSignOut,
+    required this.onToggleTheme,
+  });
+  final ValueChanged<bool>? onSwitchRole;
+  final bool isDark;
+  final String profileLabel;
+  final VoidCallback? onSignOut;
+  final VoidCallback onToggleTheme;
 
   @override
   Widget build(BuildContext context) => CupertinoButton(
@@ -137,22 +200,42 @@ class _AccountButton extends StatelessWidget {
           context: context,
           builder: (context) => CupertinoActionSheet(
             title: const Text('Account'),
-            message: const Text('Aanya Sharma · Cedar Hall · Room 204'),
+            message: Text(profileLabel),
             actions: [
               CupertinoActionSheetAction(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  onSwitchRole(true);
+                  onToggleTheme();
                 },
-                child: const Text('Switch to warden view'),
+                child: Text(
+                  isDark ? 'Use light appearance' : 'Use dark appearance',
+                ),
               ),
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  onSwitchRole(false);
-                },
-                child: const Text('Switch to resident view'),
-              ),
+              if (onSwitchRole != null) ...[
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onSwitchRole!(true);
+                  },
+                  child: const Text('Switch to warden demo view'),
+                ),
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onSwitchRole!(false);
+                  },
+                  child: const Text('Switch to resident demo view'),
+                ),
+              ],
+              if (onSignOut != null)
+                CupertinoActionSheetAction(
+                  isDestructiveAction: true,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onSignOut!();
+                  },
+                  child: const Text('Sign out'),
+                ),
             ],
             cancelButton: CupertinoActionSheetAction(
               onPressed: () => Navigator.of(context).pop(),

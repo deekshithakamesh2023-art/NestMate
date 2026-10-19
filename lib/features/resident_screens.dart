@@ -26,36 +26,42 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PortalScaffold(
-        title: 'NestMate',
+        title: 'VIT  ·  NESTMATE',
         trailing: accountButton,
         child: PortalScroll(
           children: [
+            const Eyebrow('VIT CHENNAI  ·  CAMPUS LIFE'),
+            const SizedBox(height: PortalTokens.space3),
+            const DisplayText(
+              'Campus life,\nmade easier.',
+              fontSize: 38,
+            ),
+            const SizedBox(height: PortalTokens.space2),
             Text(
-              'Good morning, Aanya',
+              'Your home between classes, all in one place.',
               style: TextStyle(
-                color: context.primaryText,
-                fontSize: 27,
-                fontWeight: FontWeight.w700,
+                color: context.secondaryText,
+                fontSize: 16,
               ),
             ),
-            const SizedBox(height: PortalTokens.space1),
-            Text(
-              'Your home, taken care of.',
-              style: TextStyle(color: context.secondaryText),
-            ),
             const SizedBox(height: PortalTokens.space5),
+            _CampusWelcome(onOpenHostel: onOpenHostel),
+            const SizedBox(height: PortalTokens.space4),
+            const SectionHeading('A few things for today'),
             PortalCard(
               onTap: onOpenRequests,
+              padding: const EdgeInsets.all(PortalTokens.space4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(CupertinoIcons.wrench, color: context.accent),
-                      const SizedBox(width: PortalTokens.space2),
+                      Icon(CupertinoIcons.circle_grid_3x3_fill,
+                          color: context.accent),
+                      const SizedBox(width: PortalTokens.space3),
                       Expanded(
                         child: Text(
-                          'Requests in progress',
+                          'Your campus, taken care of',
                           style: TextStyle(
                             color: context.primaryText,
                             fontWeight: FontWeight.w700,
@@ -71,29 +77,32 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: PortalTokens.space2),
                   Text(
-                    'Track your hostel requests and outpasses in one place.',
+                    'Study room ceiling light · Facilities team',
                     style: TextStyle(color: context.secondaryText),
                   ),
                 ],
               ),
             ),
-            SectionHeading('Today at your hostel'),
             PortalCard(
               onTap: onOpenHostel,
               child: Row(
                 children: [
-                  Icon(CupertinoIcons.sun_max, color: context.warning),
+                  _RoundIcon(
+                      icon: CupertinoIcons.sun_max, color: context.warning),
                   const SizedBox(width: PortalTokens.space3),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Eyebrow('FROM THE MESS'),
+                        const SizedBox(height: PortalTokens.space1),
                         Text(
-                          'Lunch menu',
+                          'A table for today',
                           style: TextStyle(
-                            color: context.primaryText,
-                            fontWeight: FontWeight.w700,
-                          ),
+                              fontFamily: 'sans-serif',
+                              color: context.primaryText,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700),
                         ),
                         Text(
                           'Vegetable pulao · Dal tadka · Raita',
@@ -114,53 +123,24 @@ class HomeScreen extends StatelessWidget {
               onTap: onOpenNotices,
               child: Row(
                 children: [
-                  Icon(CupertinoIcons.bell, color: context.accent),
+                  _RoundIcon(icon: CupertinoIcons.bell, color: context.accent),
                   const SizedBox(width: PortalTokens.space3),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Eyebrow('CAMPUS UPDATE'),
+                        const SizedBox(height: PortalTokens.space1),
                         Text(
-                          'Hostel notices',
+                          'Water maintenance tomorrow',
                           style: TextStyle(
-                            color: context.primaryText,
-                            fontWeight: FontWeight.w700,
-                          ),
+                              fontFamily: 'sans-serif',
+                              color: context.primaryText,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          'Water maintenance tomorrow, 2–3 pm',
-                          style: TextStyle(color: context.secondaryText),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.chevron_right,
-                    color: context.secondaryText,
-                    size: 16,
-                  ),
-                ],
-              ),
-            ),
-            PortalCard(
-              onTap: onOpenFees,
-              child: Row(
-                children: [
-                  Icon(CupertinoIcons.creditcard, color: context.link),
-                  const SizedBox(width: PortalTokens.space3),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Fee reminder',
-                          style: TextStyle(
-                            color: context.primaryText,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          'October balance due October 25',
+                          'Block B · 2–3 pm',
                           style: TextStyle(color: context.secondaryText),
                         ),
                       ],
@@ -175,12 +155,176 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: PortalTokens.space2),
+            CupertinoButton(
+              padding:
+                  const EdgeInsets.symmetric(vertical: PortalTokens.space3),
+              alignment: Alignment.centerLeft,
+              onPressed: onOpenFees,
+              child: Row(
+                children: [
+                  Icon(CupertinoIcons.creditcard,
+                      color: context.link, size: 20),
+                  const SizedBox(width: PortalTokens.space2),
+                  Expanded(
+                    child: Text(
+                      'Your VIT hostel balance is due October 25',
+                      style: TextStyle(
+                          color: context.link, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Icon(CupertinoIcons.arrow_up_right,
+                      color: context.link, size: 16),
+                ],
+              ),
+            ),
+            const SizedBox(height: PortalTokens.space2),
             Text(
-              'Need help? Submit a request and follow its status from Requests.',
-              style: TextStyle(color: context.tertiaryText, fontSize: 14),
+              'Learn here. Live well here.',
+              style: TextStyle(
+                  fontFamily: 'sans-serif',
+                  fontStyle: FontStyle.italic,
+                  color: context.tertiaryText,
+                  fontSize: 17),
             ),
           ],
         ),
+      );
+}
+
+class _CampusWelcome extends StatelessWidget {
+  const _CampusWelcome({required this.onOpenHostel});
+  final VoidCallback onOpenHostel;
+
+  @override
+  Widget build(BuildContext context) => Interactive3DSurface(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(PortalTokens.radiusLarge),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 430),
+            child: Stack(
+              fit: StackFit.passthrough,
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/vit_chennai_campus.png',
+                    key: const ValueKey('vit-chennai-campus-photo'),
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0, .42),
+                    semanticLabel: 'VIT Chennai campus entrance',
+                  ),
+                ),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF002147).withValues(alpha: .76),
+                          const Color(0xFF002147).withValues(alpha: .45),
+                          const Color(0xFF002147).withValues(alpha: .84),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            child: Eyebrow(
+                              'VIT CHENNAI  ·  STUDENT RESIDENCE',
+                              color: PortalTokens.vitGold,
+                            ),
+                          ),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: ColoredBox(
+                              color: const Color(0xFFFFFFFF),
+                              child: Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: Image.asset(
+                                  'assets/images/vit_chennai_logo.png',
+                                  key: const ValueKey('vit-chennai-logo'),
+                                  width: 112,
+                                  height: 68,
+                                  fit: BoxFit.contain,
+                                  semanticLabel: 'VIT Chennai logo',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: MediaQuery.textScalerOf(context).scale(52),
+                      ),
+                      const DisplayText(
+                        'Your campus.\nYour home.',
+                        color: Color(0xFFFFFFFF),
+                        fontSize: 38,
+                      ),
+                      const SizedBox(height: PortalTokens.space2),
+                      const Text(
+                        'Classes, community, and everything in between.',
+                        style: TextStyle(color: Color(0xFFE0EAF5), height: 1.5),
+                      ),
+                      const SizedBox(height: PortalTokens.space4),
+                      CupertinoButton(
+                        minimumSize: const Size(48, 48),
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        color: PortalTokens.vitGold,
+                        onPressed: onOpenHostel,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Flexible(
+                              child: Text(
+                                'Explore campus services',
+                                style: TextStyle(
+                                  color: Color(0xFF002147),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: PortalTokens.space2),
+                            const Icon(
+                              CupertinoIcons.arrow_right,
+                              color: Color(0xFF002147),
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+}
+
+class _RoundIcon extends StatelessWidget {
+  const _RoundIcon({required this.icon, required this.color});
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: .12),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: color, size: 20),
       );
 }
 
@@ -221,9 +365,10 @@ class _RequestsScreenState extends State<RequestsScreen> {
         trailing: widget.accountButton,
         child: PortalScroll(
           children: [
-            Text(
-              'A clear path from request to resolution.',
-              style: TextStyle(color: context.secondaryText),
+            const EditorialHeading(
+              eyebrow: 'YOUR INBOX',
+              title: 'Care, in motion.',
+              description: 'A clear path from request to resolution.',
             ),
             const SizedBox(height: PortalTokens.space4),
             PrimaryButton(
@@ -346,11 +491,12 @@ class _ComplaintFormState extends State<ComplaintForm> {
       HapticFeedback.mediumImpact();
       if (mounted) setState(() => _submitted = true);
     } catch (error) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => _error =
               'Your complaint wasn’t sent. Your draft is still here. $error',
         );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -393,9 +539,11 @@ class _ComplaintFormState extends State<ComplaintForm> {
               )
             : PortalScroll(
                 children: [
-                  Text(
-                    'Tell us what needs attention. Your details stay with the hostel team.',
-                    style: TextStyle(color: context.secondaryText),
+                  const EditorialHeading(
+                    eyebrow: 'A NOTE TO THE TEAM',
+                    title: 'Let us know.',
+                    description:
+                        'Tell us what needs attention. Your details stay with the hostel team.',
                   ),
                   const SizedBox(height: PortalTokens.space5),
                   Text(
@@ -449,12 +597,29 @@ class _ComplaintFormState extends State<ComplaintForm> {
                     Padding(
                       padding:
                           const EdgeInsets.only(bottom: PortalTokens.space3),
-                      child: Semantics(
-                        liveRegion: true,
-                        child: Text(
-                          _error!,
-                          style: TextStyle(color: context.error),
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Semantics(
+                            liveRegion: true,
+                            child: Text(
+                              _error!,
+                              style: TextStyle(color: context.error),
+                            ),
+                          ),
+                          CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(44, 44),
+                            onPressed: _busy ? null : _submit,
+                            child: Text(
+                              'Retry complaint',
+                              style: TextStyle(
+                                color: context.link,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   PrimaryButton(
@@ -567,11 +732,12 @@ class _OutpassFormState extends State<OutpassForm> {
       HapticFeedback.mediumImpact();
       if (mounted) setState(() => _submitted = true);
     } catch (error) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => _error =
               'Your request wasn’t sent. Your draft is still here. $error',
         );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -608,9 +774,11 @@ class _OutpassFormState extends State<OutpassForm> {
               )
             : PortalScroll(
                 children: [
-                  Text(
-                    'Choose dates within the next 30 days; return must be within 14 nights.',
-                    style: TextStyle(color: context.secondaryText),
+                  const EditorialHeading(
+                    eyebrow: 'A LITTLE TRIP',
+                    title: 'Head out, come home.',
+                    description:
+                        'Choose dates within the next 30 days; return must be within 14 nights.',
                   ),
                   const SizedBox(height: PortalTokens.space5),
                   _DateField(
@@ -866,9 +1034,10 @@ class _HostelScreenState extends State<HostelScreen> {
         trailing: widget.accountButton,
         child: PortalScroll(
           children: [
-            Text(
-              'Everyday essentials, all in one place.',
-              style: TextStyle(color: context.secondaryText),
+            const EditorialHeading(
+              eyebrow: 'LIFE AT YOUR RESIDENCE',
+              title: 'The daily rituals.',
+              description: 'Good food, a little feedback, clean clothes.',
             ),
             const SectionHeading('Today’s mess menu'),
             LoadState<List<MenuItem>>(
@@ -1005,9 +1174,10 @@ class _NoticesScreenState extends State<NoticesScreen> {
         trailing: widget.accountButton,
         child: PortalScroll(
           children: [
-            Text(
-              'Updates from your hostel team.',
-              style: TextStyle(color: context.secondaryText),
+            const EditorialHeading(
+              eyebrow: 'PINNED FOR YOU',
+              title: 'Around the house.',
+              description: 'Updates from your hostel team.',
             ),
             const SizedBox(height: PortalTokens.space3),
             LoadState<List<PortalNotice>>(
@@ -1101,9 +1271,9 @@ class _FeesScreenState extends State<FeesScreen> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('Confirm payment'),
+        title: const Text('Demo payment · no charge'),
         content: Text(
-          'Pay ₹${account.totalDue} toward your hostel fees? This action cannot be undone.',
+          'No real payment will be made and your fees will not change. Simulate a payment of ₹${account.totalDue}?',
         ),
         actions: [
           CupertinoDialogAction(
@@ -1113,7 +1283,7 @@ class _FeesScreenState extends State<FeesScreen> {
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Pay now'),
+            child: const Text('Simulate payment'),
           ),
         ],
       ),
@@ -1146,9 +1316,10 @@ class _FeesScreenState extends State<FeesScreen> {
         trailing: widget.accountButton,
         child: PortalScroll(
           children: [
-            Text(
-              'Your fee account',
-              style: TextStyle(color: context.secondaryText),
+            const EditorialHeading(
+              eyebrow: 'THE PRACTICAL SIDE',
+              title: 'Your account.',
+              description: 'Clear details, no surprises.',
             ),
             const SizedBox(height: PortalTokens.space3),
             LoadState<FeeAccount>(
@@ -1167,7 +1338,7 @@ class _FeesScreenState extends State<FeesScreen> {
                           ),
                           const SizedBox(height: PortalTokens.space3),
                           Text(
-                            'Payment confirmed',
+                            'Demo payment complete',
                             style: TextStyle(
                               color: context.primaryText,
                               fontSize: 20,
@@ -1175,7 +1346,7 @@ class _FeesScreenState extends State<FeesScreen> {
                             ),
                           ),
                           Text(
-                            'Reference ${account.reference}',
+                            'No real payment was made or fees account updated. Demo reference ${account.reference}.',
                             style: TextStyle(color: context.secondaryText),
                           ),
                         ],
@@ -1227,15 +1398,25 @@ class _FeesScreenState extends State<FeesScreen> {
                               ),
                             ),
                           ),
-                        PrimaryButton(
-                          label: 'Review and pay',
-                          icon: CupertinoIcons.lock,
-                          busy: _busy,
-                          onPressed: () => _confirmPayment(account),
-                        ),
+                        if (widget.repository.supportsPayment)
+                          PrimaryButton(
+                            label: 'Review and pay',
+                            icon: CupertinoIcons.lock,
+                            busy: _busy,
+                            onPressed: () => _confirmPayment(account),
+                          )
+                        else
+                          PortalCard(
+                            child: Text(
+                              'Online payment is not configured. Contact the hostel office to pay securely.',
+                              style: TextStyle(color: context.secondaryText),
+                            ),
+                          ),
                         const SizedBox(height: PortalTokens.space3),
                         Text(
-                          'You’ll confirm the amount before payment. Don’t retry if your bank shows a pending charge; contact the office so it can be checked.',
+                          widget.repository.supportsPayment
+                              ? 'Demo only: no real payment will be sent or recorded.'
+                              : 'Your live fee balance is read-only here. Payments will be available after a verified payment provider is connected.',
                           style: TextStyle(
                             color: context.secondaryText,
                             fontSize: 14,
@@ -1277,9 +1458,10 @@ class _TriageScreenState extends State<TriageScreen> {
         trailing: widget.accountButton,
         child: PortalScroll(
           children: [
-            Text(
-              'Review new requests and keep residents informed.',
-              style: TextStyle(color: context.secondaryText),
+            const EditorialHeading(
+              eyebrow: 'WARDEN DESK',
+              title: 'Keep things moving.',
+              description: 'Review new requests and keep residents informed.',
             ),
             const SizedBox(height: PortalTokens.space3),
             LoadState<List<ResidentRequest>>(
@@ -1308,43 +1490,33 @@ class _TriageScreenState extends State<TriageScreen> {
                                   ),
                                 )
                                     .then((_) {
-                                  if (mounted)
+                                  if (mounted) {
                                     setState(
                                       () => _queue = widget.repositories.warden
                                           .triageQueue(),
                                     );
+                                  }
                                 });
                               },
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          request.title,
-                                          style: TextStyle(
-                                            color: context.primaryText,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${request.id} · ${request.isOutpass ? 'Outpass' : request.category?.label ?? 'Complaint'}',
-                                          style: TextStyle(
-                                            color: context.secondaryText,
-                                          ),
-                                        ),
-                                      ],
+                                  Text(
+                                    request.title,
+                                    style: TextStyle(
+                                      color: context.primaryText,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
-                                  const SizedBox(width: PortalTokens.space2),
-                                  StatusTag(request.status.label),
-                                  Icon(
-                                    CupertinoIcons.chevron_right,
-                                    color: context.secondaryText,
-                                    size: 16,
+                                  const SizedBox(height: PortalTokens.space1),
+                                  Text(
+                                    '${request.id} · ${request.isOutpass ? 'Outpass' : request.category?.label ?? 'Complaint'}',
+                                    style: TextStyle(
+                                      color: context.secondaryText,
+                                    ),
                                   ),
+                                  const SizedBox(height: PortalTokens.space2),
+                                  StatusTag(request.status.label),
                                 ],
                               ),
                             ),
@@ -1382,19 +1554,11 @@ class _TriageDetailState extends State<TriageDetail> {
         title: 'Request details',
         child: PortalScroll(
           children: [
-            Text(
-              widget.request.title,
-              style: TextStyle(
-                color: context.primaryText,
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
+            Eyebrow(
+              '${widget.request.id}  ·  ${widget.request.isOutpass ? 'OUTPASS' : 'RESIDENT REQUEST'}',
             ),
             const SizedBox(height: PortalTokens.space2),
-            Text(
-              '${widget.request.id} · ${widget.request.isOutpass ? 'Outpass' : widget.request.category?.label ?? 'Complaint'}',
-              style: TextStyle(color: context.secondaryText),
-            ),
+            DisplayText(widget.request.title, fontSize: 32),
             const SizedBox(height: PortalTokens.space4),
             PortalCard(
               child: Text(
@@ -1460,14 +1624,16 @@ class _TriageDetailState extends State<TriageDetail> {
         assignee: _assignee!,
       );
       HapticFeedback.selectionClick();
-      if (mounted)
+      if (mounted) {
         setState(() => _saved = 'Update saved for ${widget.request.id}.');
+      }
     } catch (error) {
-      if (mounted)
+      if (mounted) {
         setState(
           () => _error =
               'Update couldn’t be saved. Your changes are still here. $error',
         );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

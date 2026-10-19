@@ -5,3 +5,5 @@ build/
 coverage/
 .flutter-plugins
 .flutter-plugins-dependencies
+.idea/
+*.iml
