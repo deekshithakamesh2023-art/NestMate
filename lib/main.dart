@@ -22,6 +22,7 @@ Future<void> main() async {
   runApp(
     FirebaseConfig.isConfigured
         ? FirebasePortalGate(
+            demoBuilder: (onExitDemo) => NestMateApp(onExitDemo: onExitDemo),
             portalBuilder: (repositories, isWarden, onSignOut, profileLabel) =>
                 NestMateApp(
               repositories: repositories,
@@ -41,6 +42,7 @@ class NestMateApp extends StatefulWidget {
     this.isWarden,
     this.demoMode = true,
     this.onSignOut,
+    this.onExitDemo,
     this.profileLabel,
     super.key,
   });
@@ -49,6 +51,7 @@ class NestMateApp extends StatefulWidget {
   final bool? isWarden;
   final bool demoMode;
   final VoidCallback? onSignOut;
+  final VoidCallback? onExitDemo;
   final String? profileLabel;
 
   @override
@@ -140,6 +143,7 @@ class _NestMateAppState extends State<NestMateApp> {
       profileLabel: widget.profileLabel ??
           'Demo account · Aanya Sharma · VIT Chennai · Room 204',
       onSignOut: widget.onSignOut,
+      onExitDemo: widget.onExitDemo,
       onToggleTheme: () => setState(
         () => _brightness =
             _brightness == Brightness.dark ? Brightness.light : Brightness.dark,
@@ -184,12 +188,14 @@ class _AccountButton extends StatelessWidget {
     required this.isDark,
     required this.profileLabel,
     required this.onSignOut,
+    required this.onExitDemo,
     required this.onToggleTheme,
   });
   final ValueChanged<bool>? onSwitchRole;
   final bool isDark;
   final String profileLabel;
   final VoidCallback? onSignOut;
+  final VoidCallback? onExitDemo;
   final VoidCallback onToggleTheme;
 
   @override
@@ -235,6 +241,14 @@ class _AccountButton extends StatelessWidget {
                     onSignOut!();
                   },
                   child: const Text('Sign out'),
+                ),
+              if (onExitDemo != null)
+                CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onExitDemo!();
+                  },
+                  child: const Text('Return to sign in'),
                 ),
             ],
             cancelButton: CupertinoActionSheetAction(

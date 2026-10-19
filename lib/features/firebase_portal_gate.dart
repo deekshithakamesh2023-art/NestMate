@@ -13,10 +13,17 @@ typedef FirebasePortalBuilder = Widget Function(
   String profileLabel,
 );
 
+typedef FirebaseDemoBuilder = Widget Function(VoidCallback onExitDemo);
+
 class FirebasePortalGate extends StatelessWidget {
-  const FirebasePortalGate({required this.portalBuilder, super.key});
+  const FirebasePortalGate({
+    required this.portalBuilder,
+    required this.demoBuilder,
+    super.key,
+  });
 
   final FirebasePortalBuilder portalBuilder;
+  final FirebaseDemoBuilder demoBuilder;
 
   @override
   Widget build(BuildContext context) => CupertinoApp(
@@ -35,7 +42,17 @@ class FirebasePortalGate extends StatelessWidget {
               return const _LoadingScreen();
             }
             final user = snapshot.data;
-            if (user == null) return const _SignInScreen();
+            if (user == null) {
+              return _SignInScreen(
+                onExploreDemo: () => Navigator.of(context).push(
+                  CupertinoPageRoute<void>(
+                    builder: (_) => demoBuilder(
+                      () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ),
+              );
+            }
             return _RoleClaimScreen(
               key: ValueKey(user.uid),
               user: user,
@@ -89,7 +106,9 @@ class _RoleClaimScreenState extends State<_RoleClaimScreen> {
 }
 
 class _SignInScreen extends StatefulWidget {
-  const _SignInScreen();
+  const _SignInScreen({required this.onExploreDemo});
+
+  final VoidCallback onExploreDemo;
 
   @override
   State<_SignInScreen> createState() => _SignInScreenState();
@@ -243,6 +262,12 @@ class _SignInScreenState extends State<_SignInScreen> {
                                         color: Color(0xFFFFFFFF),
                                       )
                                     : const Text('Sign in'),
+                              ),
+                              const SizedBox(height: 8),
+                              CupertinoButton(
+                                minimumSize: const Size(0, 48),
+                                onPressed: _busy ? null : widget.onExploreDemo,
+                                child: const Text('Explore demo'),
                               ),
                               const SizedBox(height: 16),
                               Text(

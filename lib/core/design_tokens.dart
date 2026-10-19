@@ -14,7 +14,7 @@ abstract final class PortalTokens {
   static const double radiusLarge = 28;
   static const double tapTarget = 48;
 
-  static const Color lightBackground = Color(0xFFF2F5F9);
+  static const Color lightBackground = Color(0xFFF7F5EF);
   static const Color lightSurface = Color(0xFFFFFFFF);
   static const Color lightPrimaryText = Color(0xFF002147);
   static const Color lightSecondaryText = Color(0xFF344B66);
@@ -26,6 +26,7 @@ abstract final class PortalTokens {
   static const Color lightSuccess = Color(0xFF28613E);
   static const Color lightWarning = Color(0xFF755000);
   static const Color lightBorder = Color(0xFF8293A8);
+  static const Color vitNavy = Color(0xFF002147);
   static const Color vitGold = Color(0xFFFFC000);
 
   static const Color darkBackground = Color(0xFF0A1628);
