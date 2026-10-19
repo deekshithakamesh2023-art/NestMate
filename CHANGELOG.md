@@ -2,6 +2,8 @@
 
 ## 1.2.0 — 2026-10-18
 
+- Refreshed the resident home as a daily campus dashboard, drawing on wellness-app patterns while preserving VIT Chennai branding and hostel workflows.
+- Gave requests, outpasses, mess, laundry, notices, fees, and warden triage distinct visual layouts and contextual status details.
 - Re-themed the resident portal around VIT's publicly visible navy-and-gold palette and campus identity.
 - Replaced the illustrated campus with the supplied VIT Chennai campus photograph and logo.
 - Updated semantic dark-mode colors, contrast documentation, and responsive VIT wordmark tests; no official logo is used.

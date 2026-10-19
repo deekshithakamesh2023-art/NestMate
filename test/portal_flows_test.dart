@@ -304,6 +304,8 @@ void main() {
       find.textContaining('no real hostel requests or payments are sent.'),
       findsWidgets,
     );
+    expect(find.text('Report an issue'), findsOneWidget);
+    expect(find.text('Plan a trip'), findsOneWidget);
     expect(find.text('Requests'), findsOneWidget);
     for (final label in ['Home', 'Hostel', 'Notices', 'Fees']) {
       expect(find.text(label), findsWidgets);
@@ -314,6 +316,12 @@ void main() {
       matching: find.byType(Transform),
     );
     expect(transform, findsOneWidget);
+
+    await tester.tap(find.text('Report an issue'));
+    await tester.pumpAndSettle();
+    expect(find.text('New complaint'), findsOneWidget);
+    await tester.tap(find.text('Home').first);
+    await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('Explore campus services'));
     await tester.tap(find.text('Explore campus services'));
@@ -335,6 +343,21 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Account and role settings'));
     await tester.pumpAndSettle();
     expect(find.text('Use light appearance'), findsOneWidget);
+  });
+
+  testWidgets('demo account menu can return to sign in', (tester) async {
+    var exitedDemo = false;
+    await tester.pumpWidget(
+      NestMateApp(onExitDemo: () => exitedDemo = true),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.bySemanticsLabel('Account and role settings'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Return to sign in'));
+    await tester.pumpAndSettle();
+
+    expect(exitedDemo, isTrue);
   });
 
   testWidgets('interactive 3D surface tilts while pressed', (tester) async {

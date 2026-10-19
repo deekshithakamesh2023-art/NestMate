@@ -11,7 +11,7 @@ flutter run
 
 For a browser preview, run `flutter run -d chrome` (web support is included).
 
-Without Firebase configuration, the account button switches between resident and warden **demo views**; it is not authentication or access control. A persistent in-app notice identifies this mode and clarifies that demo requests and payments are not sent to real services. Configure Firebase Auth and Firestore as described in [docs/firebase-setup.md](docs/firebase-setup.md) to enable signed-in resident requests, warden custom-claim authorization, notices, menus, feedback, laundry requests, and read-only fee balances. Online payment is not configured.
+Without Firebase configuration, the account button switches between resident and warden **demo views**; it is not authentication or access control. When Firebase is configured, the sign-in screen also offers **Explore demo** to open the sample portal without signing in; choose **Return to sign in** from the account menu to leave it. A persistent in-app notice identifies demo mode and clarifies that sample requests and payments are not sent to real services. Configure Firebase Auth and Firestore as described in [docs/firebase-setup.md](docs/firebase-setup.md) to enable signed-in resident requests, warden custom-claim authorization, notices, menus, feedback, laundry requests, and read-only fee balances. Online payment is not configured.
 
 ## Verify
 

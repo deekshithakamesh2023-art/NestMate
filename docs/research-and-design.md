@@ -53,21 +53,23 @@ The approved request/outpass flows are deliberately short but keep category, rea
 
 `lib/core/design_tokens.dart` is the single source of spacing, radii, tap targets, and light/dark semantic colors. Text uses normal Flutter/Cupertino text scaling; the app does not override the user's text scale. The visual direction uses VIT's deep navy and gold/yellow as seen on the [official VIT homepage](https://vit.ac.in/) (`#002147` and `#FFC000`), with the user-provided VIT Chennai campus photo and logo. This is a student-portal concept, not an official VIT product or endorsement. Contrast ratios in this table are rounded to two decimals. Standard text pairs meet 4.5:1 in both modes; button labels meet 4.5:1 against the button fill.
 
+The resident dashboard borrows general product ideas from the user's Fitelo reference: a clear daily focus, approachable progress cues, and friendly, scannable cards. Fitelo's App Store listing describes habit and activity tracking; the portal adapts the high-level dashboard pattern to campus requests, mess, laundry, notices, and fees, without using Fitelo branding or reproducing its screens. [Fitelo App Store listing](https://apps.apple.com/in/app/fitelo-weight-loss-diet-app/id1323938554)
+
 | Text role | Light foreground / background | Ratio | Dark foreground / background | Ratio |
 |---|---|---:|---|---:|
-| Primary | `#002147` / canvas `#F2F5F9` | 14.68:1 | `#F3F6FC` / canvas `#0A1628` | 16.75:1 |
+| Primary | `#002147` / canvas `#F7F5EF` | 14.72:1 | `#F3F6FC` / canvas `#0A1628` | 16.75:1 |
 | Primary | `#002147` / surface `#FFFFFF` | 16.05:1 | `#F3F6FC` / surface `#11233A` | 14.64:1 |
-| Secondary | `#344B66` / canvas `#F2F5F9` | 8.19:1 | `#C8D4E4` / canvas `#0A1628` | 12.08:1 |
+| Secondary | `#344B66` / canvas `#F7F5EF` | 8.22:1 | `#C8D4E4` / canvas `#0A1628` | 12.08:1 |
 | Secondary | `#344B66` / surface `#FFFFFF` | 8.96:1 | `#C8D4E4` / surface `#11233A` | 10.56:1 |
-| Tertiary | `#4E647D` / canvas `#F2F5F9` | 5.58:1 | `#ADBED2` / canvas `#0A1628` | 9.56:1 |
+| Tertiary | `#4E647D` / canvas `#F7F5EF` | 5.59:1 | `#ADBED2` / canvas `#0A1628` | 9.56:1 |
 | Tertiary | `#4E647D` / surface `#FFFFFF` | 6.10:1 | `#ADBED2` / surface `#11233A` | 8.35:1 |
-| Link | `#064F8C` / canvas `#F2F5F9` | 7.67:1 | `#91CFFF` / canvas `#0A1628` | 10.85:1 |
+| Link | `#064F8C` / canvas `#F7F5EF` | 7.69:1 | `#91CFFF` / canvas `#0A1628` | 10.85:1 |
 | Link | `#064F8C` / surface `#FFFFFF` | 8.38:1 | `#91CFFF` / surface `#11233A` | 9.49:1 |
-| Error | `#9B2D2D` / canvas `#F2F5F9` | 6.84:1 | `#FFB4AA` / canvas `#0A1628` | 10.67:1 |
+| Error | `#9B2D2D` / canvas `#F7F5EF` | 6.86:1 | `#FFB4AA` / canvas `#0A1628` | 10.67:1 |
 | Error | `#9B2D2D` / surface `#FFFFFF` | 7.48:1 | `#FFB4AA` / surface `#11233A` | 9.33:1 |
-| Success | `#28613E` / canvas `#F2F5F9` | 6.69:1 | `#A8DEB2` / canvas `#0A1628` | 11.88:1 |
+| Success | `#28613E` / canvas `#F7F5EF` | 6.71:1 | `#A8DEB2` / canvas `#0A1628` | 11.88:1 |
 | Success | `#28613E` / surface `#FFFFFF` | 7.32:1 | `#A8DEB2` / surface `#11233A` | 10.38:1 |
-| Warning | `#755000` / canvas `#F2F5F9` | 6.61:1 | `#FFD37A` / canvas `#0A1628` | 12.82:1 |
+| Warning | `#755000` / canvas `#F7F5EF` | 6.63:1 | `#FFD37A` / canvas `#0A1628` | 12.82:1 |
 | Warning | `#755000` / surface `#FFFFFF` | 7.23:1 | `#FFD37A` / surface `#11233A` | 11.21:1 |
 | Light filled primary label | `#FFFFFF` / VIT navy `#002147` | 16.05:1 | Dark filled primary label | N/A |
 | Dark filled primary label | N/A | N/A | `#10243B` / VIT gold `#FFC000` | 9.56:1 |
