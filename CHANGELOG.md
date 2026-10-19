@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 — 2026-10-19
+
+- Reframed the no-backend route as a local prototype preview and clarified that sample changes stay in-session and never reach hostel staff.
+- Added request progress bars and plain-language resolved, in-progress, and closed-without-resolution states; included a resolved sample request for previewing both outcomes.
+- Made prototype meal feedback and laundry pickup actions record in the in-memory repository, and labeled payment as a no-charge prototype simulation.
+- Added a dedicated checkout handoff screen with selectable UPI, card, and net-banking preview options before the no-charge payment simulation.
+- Preserved Firebase-backed sign-in and repository behavior for connected accounts; online payment remains unavailable until a verified provider is configured.
+
 ## 1.2.0 — 2026-10-18
 
 - Refreshed the resident home as a daily campus dashboard, drawing on wellness-app patterns while preserving VIT Chennai branding and hostel workflows.
@@ -7,7 +15,7 @@
 - Re-themed the resident portal around VIT's publicly visible navy-and-gold palette and campus identity.
 - Replaced the illustrated campus with the supplied VIT Chennai campus photograph and logo.
 - Updated semantic dark-mode colors, contrast documentation, and responsive VIT wordmark tests; no official logo is used.
-- Added a persistent demo-only notice, clearly labeled demo account/role switching, and payment copy that cannot be mistaken for a real charge.
+- Added a persistent prototype-only notice, clearly labeled preview role switching, and payment copy that cannot be mistaken for a real charge.
 - Added a subtle hover/press 3D tilt to the campus welcome and tappable cards, plus faceted campus buildings.
 - Added optional Firebase Auth and Firestore repositories with role claims, restrictive Firestore rules, and an explicit payment-disabled state in live mode.
 

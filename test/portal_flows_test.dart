@@ -143,6 +143,7 @@ void main() {
     testWidgets('requires confirmation before showing a payment receipt', (
       tester,
     ) async {
+      _useTallTestViewport(tester);
       final repository = _PaymentRecorder();
       await tester.pumpWidget(
         _testApp(
@@ -154,24 +155,35 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(
-        find.textContaining('no real hostel requests or payments are sent.'),
+        find.textContaining('Prototype preview'),
         findsOneWidget,
       );
       await tester.tap(find.text('Review and pay'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Demo payment · no charge'), findsOneWidget);
+      expect(find.text('Choose how\nto pay.'), findsOneWidget);
+      expect(find.text('UPI'), findsOneWidget);
+      expect(find.text('Credit or debit card'), findsOneWidget);
       expect(
-          find.textContaining('No real payment will be made'), findsOneWidget);
+        find.textContaining('No payment provider is connected'),
+        findsOneWidget,
+      );
       expect(repository.paymentCount, 0);
-      await tester.tap(find.text('Simulate payment'));
+      await tester.tap(find.text('Credit or debit card'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Continue with Card'));
+      await tester.tap(find.text('Continue with Card'));
+      await tester.pumpAndSettle();
+      expect(find.text('Prototype payment · no charge'), findsOneWidget);
+      await tester.tap(find.text('Preview payment'));
       await tester.pumpAndSettle();
       expect(repository.paymentCount, 1);
-      expect(find.text('Demo payment complete'), findsOneWidget);
+      expect(find.text('Prototype payment complete'), findsOneWidget);
       expect(find.textContaining('No real payment was made'), findsOneWidget);
     });
 
     testWidgets('cancel does not invoke payment', (tester) async {
+      _useTallTestViewport(tester);
       final repository = _PaymentRecorder();
       await tester.pumpWidget(
         _testApp(
@@ -184,14 +196,15 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Review and pay'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Cancel'));
+      await tester.tap(find.byIcon(CupertinoIcons.back));
       await tester.pumpAndSettle();
       expect(repository.paymentCount, 0);
-      expect(find.text('Demo payment complete'), findsNothing);
+      expect(find.text('Prototype payment complete'), findsNothing);
     });
 
     testWidgets('allows retry when payment cannot be confirmed',
         (tester) async {
+      _useTallTestViewport(tester);
       final repository = _FailOncePaymentRepository();
       await tester.pumpWidget(
         _testApp(FeesScreen(
@@ -200,17 +213,23 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('Review and pay'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Simulate payment'));
+      await tester.ensureVisible(find.text('Continue with UPI'));
+      await tester.tap(find.text('Continue with UPI'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Preview payment'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Payment could not be confirmed.'),
           findsOneWidget);
-      expect(find.text('Demo payment complete'), findsNothing);
+      expect(find.text('Prototype payment complete'), findsNothing);
 
       await tester.tap(find.text('Review and pay'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Simulate payment'));
+      await tester.ensureVisible(find.text('Continue with UPI'));
+      await tester.tap(find.text('Continue with UPI'));
       await tester.pumpAndSettle();
-      expect(find.text('Demo payment complete'), findsOneWidget);
+      await tester.tap(find.text('Preview payment'));
+      await tester.pumpAndSettle();
+      expect(find.text('Prototype payment complete'), findsOneWidget);
     });
   });
 
@@ -262,6 +281,44 @@ void main() {
     });
   });
 
+  testWidgets(
+      'request cards show progress and resolved state in plain language',
+      (tester) async {
+    _useTallTestViewport(tester);
+    final repository = MockPortalRepository();
+    await tester.pumpWidget(
+      _testApp(
+        RequestsScreen(
+          repositories: PortalRepositories(
+            resident: repository,
+            hostel: repository,
+            notices: repository,
+            fees: repository,
+            warden: repository,
+          ),
+          accountButton: const SizedBox.shrink(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Issue still in progress'), findsWidgets);
+    expect(find.text('Issue resolved'), findsOneWidget);
+    expect(find.text('Resolved'), findsOneWidget);
+    expect(find.bySemanticsLabel('Request progress'), findsWidgets);
+  });
+
+  test('prototype repository records feedback and laundry actions in session',
+      () async {
+    final repository = MockPortalRepository();
+    await repository.sendMealFeedback('More vegetarian options, please.');
+    await repository.requestLaundryPickup('Collect after 4 pm.');
+
+    expect(
+        repository.mealFeedbackMessages, ['More vegetarian options, please.']);
+    expect(repository.laundryPickupRequests, ['Collect after 4 pm.']);
+  });
+
   testWidgets('warden can update a request status and assignee', (
     tester,
   ) async {
@@ -301,7 +358,7 @@ void main() {
         find.byKey(const ValueKey('vit-chennai-campus-photo')), findsOneWidget);
     expect(find.byKey(const ValueKey('vit-chennai-logo')), findsOneWidget);
     expect(
-      find.textContaining('no real hostel requests or payments are sent.'),
+      find.textContaining('Prototype preview'),
       findsWidgets,
     );
     expect(find.text('Report an issue'), findsOneWidget);
@@ -332,7 +389,7 @@ void main() {
 
     await tester.tap(find.bySemanticsLabel('Account and role settings'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Switch to warden demo view'));
+    await tester.tap(find.text('Preview warden view'));
     await tester.pumpAndSettle();
     expect(find.text('Triage'), findsWidgets);
 
@@ -345,10 +402,11 @@ void main() {
     expect(find.text('Use light appearance'), findsOneWidget);
   });
 
-  testWidgets('demo account menu can return to sign in', (tester) async {
-    var exitedDemo = false;
+  testWidgets('prototype preview account menu can return to sign in',
+      (tester) async {
+    var exitedPreview = false;
     await tester.pumpWidget(
-      NestMateApp(onExitDemo: () => exitedDemo = true),
+      NestMateApp(onExitPreview: () => exitedPreview = true),
     );
     await tester.pumpAndSettle();
 
@@ -357,7 +415,7 @@ void main() {
     await tester.tap(find.text('Return to sign in'));
     await tester.pumpAndSettle();
 
-    expect(exitedDemo, isTrue);
+    expect(exitedPreview, isTrue);
   });
 
   testWidgets('interactive 3D surface tilts while pressed', (tester) async {

@@ -22,12 +22,13 @@ Future<void> main() async {
   runApp(
     FirebaseConfig.isConfigured
         ? FirebasePortalGate(
-            demoBuilder: (onExitDemo) => NestMateApp(onExitDemo: onExitDemo),
+            previewBuilder: (onExitPreview) =>
+                NestMateApp(onExitPreview: onExitPreview),
             portalBuilder: (repositories, isWarden, onSignOut, profileLabel) =>
                 NestMateApp(
               repositories: repositories,
               isWarden: isWarden,
-              demoMode: false,
+              prototypePreview: false,
               onSignOut: onSignOut,
               profileLabel: profileLabel,
             ),
@@ -40,18 +41,18 @@ class NestMateApp extends StatefulWidget {
   const NestMateApp({
     this.repositories,
     this.isWarden,
-    this.demoMode = true,
+    this.prototypePreview = true,
     this.onSignOut,
-    this.onExitDemo,
+    this.onExitPreview,
     this.profileLabel,
     super.key,
   });
 
   final PortalRepositories? repositories;
   final bool? isWarden;
-  final bool demoMode;
+  final bool prototypePreview;
   final VoidCallback? onSignOut;
-  final VoidCallback? onExitDemo;
+  final VoidCallback? onExitPreview;
   final String? profileLabel;
 
   @override
@@ -76,7 +77,7 @@ class _NestMateAppState extends State<NestMateApp> {
         title: 'NestMate · VIT Hostel Life',
         theme: PortalTokens.theme(Brightness.light),
         builder: (context, child) => PortalEnvironment(
-          demoMode: widget.demoMode,
+          prototypePreview: widget.prototypePreview,
           child: CupertinoTheme(
             data: PortalTokens.theme(_brightness),
             child: child ?? const SizedBox.shrink(),
@@ -138,12 +139,12 @@ class _NestMateAppState extends State<NestMateApp> {
 
   Widget _buildTab(BuildContext context, int index) {
     final account = _AccountButton(
-      onSwitchRole: widget.demoMode ? _switchRole : null,
+      onSwitchRole: widget.prototypePreview ? _switchRole : null,
       isDark: _brightness == Brightness.dark,
       profileLabel: widget.profileLabel ??
-          'Demo account · Aanya Sharma · VIT Chennai · Room 204',
+          'Prototype preview · Aanya Sharma · VIT Chennai · Room 204',
       onSignOut: widget.onSignOut,
-      onExitDemo: widget.onExitDemo,
+      onExitPreview: widget.onExitPreview,
       onToggleTheme: () => setState(
         () => _brightness =
             _brightness == Brightness.dark ? Brightness.light : Brightness.dark,
@@ -188,14 +189,14 @@ class _AccountButton extends StatelessWidget {
     required this.isDark,
     required this.profileLabel,
     required this.onSignOut,
-    required this.onExitDemo,
+    required this.onExitPreview,
     required this.onToggleTheme,
   });
   final ValueChanged<bool>? onSwitchRole;
   final bool isDark;
   final String profileLabel;
   final VoidCallback? onSignOut;
-  final VoidCallback? onExitDemo;
+  final VoidCallback? onExitPreview;
   final VoidCallback onToggleTheme;
 
   @override
@@ -223,14 +224,14 @@ class _AccountButton extends StatelessWidget {
                     Navigator.of(context).pop();
                     onSwitchRole!(true);
                   },
-                  child: const Text('Switch to warden demo view'),
+                  child: const Text('Preview warden view'),
                 ),
                 CupertinoActionSheetAction(
                   onPressed: () {
                     Navigator.of(context).pop();
                     onSwitchRole!(false);
                   },
-                  child: const Text('Switch to resident demo view'),
+                  child: const Text('Preview resident view'),
                 ),
               ],
               if (onSignOut != null)
@@ -242,11 +243,11 @@ class _AccountButton extends StatelessWidget {
                   },
                   child: const Text('Sign out'),
                 ),
-              if (onExitDemo != null)
+              if (onExitPreview != null)
                 CupertinoActionSheetAction(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    onExitDemo!();
+                    onExitPreview!();
                   },
                   child: const Text('Return to sign in'),
                 ),

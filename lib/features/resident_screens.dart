@@ -703,24 +703,34 @@ class RequestCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Text(
+                    request.title,
+                    style: TextStyle(
+                      color: context.primaryText,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: PortalTokens.space2),
+                  Wrap(
+                    spacing: PortalTokens.space2,
+                    runSpacing: PortalTokens.space1,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Expanded(
-                        child: Text(
-                          request.title,
-                          style: TextStyle(
-                            color: context.primaryText,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      StatusTag(request.status.label),
+                      Text(
+                        request.id,
+                        style: TextStyle(
+                          color: context.secondaryText,
+                          fontSize: 13,
                         ),
                       ),
-                      StatusTag(request.status.label),
                     ],
                   ),
                   const SizedBox(height: PortalTokens.space2),
                   Text(
-                    '${request.id} · ${request.isOutpass ? 'Outpass' : request.category?.label ?? 'Complaint'}',
+                    request.isOutpass
+                        ? 'Outpass request'
+                        : request.category?.label ?? 'Complaint',
                     style:
                         TextStyle(color: context.secondaryText, fontSize: 14),
                   ),
@@ -731,12 +741,112 @@ class RequestCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: PortalTokens.space3),
+                  _RequestProgressStatus(request: request),
                 ],
               ),
             ),
           ],
         ),
       );
+}
+
+class _RequestProgressStatus extends StatelessWidget {
+  const _RequestProgressStatus({required this.request});
+
+  final ResidentRequest request;
+
+  double get _progress => switch (request.status) {
+        RequestStatus.submitted => .2,
+        RequestStatus.inReview => .45,
+        RequestStatus.inProgress => .75,
+        RequestStatus.resolved => 1,
+        RequestStatus.declined => 0,
+      };
+
+  String get _summary => switch (request.status) {
+        RequestStatus.resolved =>
+          request.isOutpass ? 'Request complete' : 'Issue resolved',
+        RequestStatus.declined => 'Closed without resolution',
+        _ => request.isOutpass
+            ? 'Request still in progress'
+            : 'Issue still in progress',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final isResolved = request.status == RequestStatus.resolved;
+    final color = isResolved ? context.success : PortalTokens.vitNavy;
+    return Semantics(
+      label: 'Request progress',
+      value: '${request.status.label}. $_summary.',
+      child: ExcludeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(99),
+              child: SizedBox(
+                height: 7,
+                child: LayoutBuilder(
+                  builder: (context, constraints) => Stack(
+                    children: [
+                      ColoredBox(
+                        color: context.border.withValues(alpha: .35),
+                        child: const SizedBox.expand(),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                          width: constraints.maxWidth * _progress,
+                          color: color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: PortalTokens.space2),
+            Row(
+              children: [
+                Icon(
+                  isResolved
+                      ? CupertinoIcons.checkmark_circle_fill
+                      : request.status == RequestStatus.declined
+                          ? CupertinoIcons.xmark_circle_fill
+                          : CupertinoIcons.clock_fill,
+                  size: 16,
+                  color: isResolved
+                      ? context.success
+                      : request.status == RequestStatus.declined
+                          ? context.error
+                          : context.secondaryText,
+                ),
+                const SizedBox(width: PortalTokens.space1),
+                Expanded(
+                  child: Text(
+                    _summary,
+                    style: TextStyle(
+                      color: isResolved
+                          ? context.success
+                          : request.status == RequestStatus.declined
+                              ? context.error
+                              : context.secondaryText,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class ComplaintForm extends StatefulWidget {
@@ -1884,6 +1994,273 @@ class FeesScreen extends StatefulWidget {
   State<FeesScreen> createState() => _FeesScreenState();
 }
 
+class _PaymentCheckoutScreen extends StatefulWidget {
+  const _PaymentCheckoutScreen({required this.account});
+
+  final FeeAccount account;
+
+  @override
+  State<_PaymentCheckoutScreen> createState() => _PaymentCheckoutScreenState();
+}
+
+class _PaymentCheckoutScreenState extends State<_PaymentCheckoutScreen> {
+  String _selectedMethod = 'UPI';
+
+  @override
+  Widget build(BuildContext context) => PortalScaffold(
+        title: 'Secure checkout',
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(44, 44),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Icon(CupertinoIcons.back),
+        ),
+        child: PortalScroll(
+          children: [
+            const Eyebrow('NESTMATE · PAYMENT HANDOFF'),
+            const SizedBox(height: PortalTokens.space2),
+            const DisplayText('Choose how\nto pay.', fontSize: 34),
+            const SizedBox(height: PortalTokens.space2),
+            Text(
+              'You’re at the checkout step. Select a method to preview the secure payment handoff.',
+              style: TextStyle(color: context.secondaryText),
+            ),
+            const SizedBox(height: PortalTokens.space4),
+            PortalCard(
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE7EEF6),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      CupertinoIcons.building_2_fill,
+                      color: PortalTokens.vitNavy,
+                    ),
+                  ),
+                  const SizedBox(width: PortalTokens.space3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'VIT Chennai · Hostel fees',
+                          style: TextStyle(
+                            color: context.primaryText,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          'Ref ${widget.account.reference}',
+                          style: TextStyle(color: context.secondaryText),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '₹${widget.account.totalDue}',
+                    style: TextStyle(
+                      color: context.primaryText,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SectionHeading('Payment method'),
+            _PaymentMethodOption(
+              title: 'UPI',
+              subtitle: 'GPay · PhonePe · Paytm',
+              icon: CupertinoIcons.qrcode,
+              selected: _selectedMethod == 'UPI',
+              onTap: () => setState(() => _selectedMethod = 'UPI'),
+            ),
+            _PaymentMethodOption(
+              title: 'Credit or debit card',
+              subtitle: 'Visa · Mastercard · RuPay',
+              icon: CupertinoIcons.creditcard,
+              selected: _selectedMethod == 'Card',
+              onTap: () => setState(() => _selectedMethod = 'Card'),
+            ),
+            _PaymentMethodOption(
+              title: 'Net banking',
+              subtitle: 'Choose your bank at the next step',
+              icon: CupertinoIcons.building_2_fill,
+              selected: _selectedMethod == 'Net banking',
+              onTap: () => setState(() => _selectedMethod = 'Net banking'),
+            ),
+            const SizedBox(height: PortalTokens.space3),
+            Container(
+              padding: const EdgeInsets.all(PortalTokens.space3),
+              decoration: BoxDecoration(
+                color: PortalTokens.vitGold.withValues(alpha: .2),
+                borderRadius: BorderRadius.circular(PortalTokens.radiusSmall),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    CupertinoIcons.info_circle,
+                    color: PortalTokens.vitNavy,
+                    size: 18,
+                  ),
+                  const SizedBox(width: PortalTokens.space2),
+                  Expanded(
+                    child: Text(
+                      'Prototype checkout only. No payment provider is connected; continuing will not open an external app or charge you.',
+                      style: TextStyle(
+                        color: context.primaryText,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: PortalTokens.space3),
+            PrimaryButton(
+              label: 'Continue with $_selectedMethod',
+              icon: CupertinoIcons.lock_shield,
+              onPressed: _confirmHandoff,
+            ),
+            const SizedBox(height: PortalTokens.space2),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.lock_shield,
+                    color: context.secondaryText,
+                    size: 14,
+                  ),
+                  const SizedBox(width: PortalTokens.space1),
+                  Flexible(
+                    child: Text(
+                      'Secure checkout preview · No real transaction',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: context.secondaryText,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+
+  Future<void> _confirmHandoff() async {
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Prototype payment · no charge'),
+        content: Text(
+          'Continue with $_selectedMethod to preview the payment result? No external payment app will open and no money will be taken.',
+        ),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Go back'),
+          ),
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Preview payment'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      Navigator.of(context).pop(true);
+    }
+  }
+}
+
+class _PaymentMethodOption extends StatelessWidget {
+  const _PaymentMethodOption({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: PortalTokens.space2),
+        child: Semantics(
+          button: true,
+          selected: selected,
+          label: '$title. $subtitle',
+          onTap: onTap,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onTap,
+            child: Container(
+              constraints: const BoxConstraints(
+                minHeight: PortalTokens.tapTarget,
+              ),
+              padding: const EdgeInsets.all(PortalTokens.space3),
+              decoration: BoxDecoration(
+                color: context.surface,
+                borderRadius: BorderRadius.circular(PortalTokens.radiusCard),
+                border: Border.all(
+                  color: selected ? PortalTokens.vitNavy : context.border,
+                  width: selected ? 2 : 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(icon, color: PortalTokens.vitNavy, size: 24),
+                  const SizedBox(width: PortalTokens.space3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            color: context.primaryText,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: context.secondaryText,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    selected
+                        ? CupertinoIcons.checkmark_circle_fill
+                        : CupertinoIcons.circle,
+                    color:
+                        selected ? PortalTokens.vitNavy : context.tertiaryText,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+}
+
 class _FeesScreenState extends State<FeesScreen> {
   late Future<FeeAccount> _account;
   bool _busy = false;
@@ -1897,24 +2274,9 @@ class _FeesScreenState extends State<FeesScreen> {
   }
 
   Future<void> _confirmPayment(FeeAccount account) async {
-    final confirmed = await showCupertinoDialog<bool>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Demo payment · no charge'),
-        content: Text(
-          'No real payment will be made and your fees will not change. Simulate a payment of ₹${account.totalDue}?',
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Simulate payment'),
-          ),
-        ],
+    final confirmed = await Navigator.of(context).push<bool>(
+      CupertinoPageRoute<bool>(
+        builder: (_) => _PaymentCheckoutScreen(account: account),
       ),
     );
     if (confirmed != true) return;
@@ -1967,7 +2329,7 @@ class _FeesScreenState extends State<FeesScreen> {
                           ),
                           const SizedBox(height: PortalTokens.space3),
                           Text(
-                            'Demo payment complete',
+                            'Prototype payment complete',
                             style: TextStyle(
                               color: context.primaryText,
                               fontSize: 20,
@@ -1975,7 +2337,7 @@ class _FeesScreenState extends State<FeesScreen> {
                             ),
                           ),
                           Text(
-                            'No real payment was made or fees account updated. Demo reference ${account.reference}.',
+                            'No real payment was made or balance updated. Prototype reference ${account.reference}.',
                             style: TextStyle(color: context.secondaryText),
                           ),
                         ],
@@ -2105,8 +2467,8 @@ class _FeesScreenState extends State<FeesScreen> {
                         const SizedBox(height: PortalTokens.space3),
                         Text(
                           widget.repository.supportsPayment
-                              ? 'Demo only: no real payment will be sent or recorded.'
-                              : 'Your live fee balance is read-only here. Payments will be available after a verified payment provider is connected.',
+                              ? 'Prototype only: this simulates the payment flow; no charge or fee-account update is made.'
+                              : 'Your fee balance is read-only here. Secure payments will be available after a verified payment provider is connected.',
                           style: TextStyle(
                             color: context.secondaryText,
                             fontSize: 14,

@@ -4,22 +4,22 @@ import 'design_tokens.dart';
 
 class PortalEnvironment extends InheritedWidget {
   const PortalEnvironment({
-    required this.demoMode,
+    required this.prototypePreview,
     required super.child,
     super.key,
   });
 
-  final bool demoMode;
+  final bool prototypePreview;
 
-  static bool demoModeOf(BuildContext context) =>
+  static bool isPrototypePreview(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<PortalEnvironment>()
-          ?.demoMode ??
+          ?.prototypePreview ??
       true;
 
   @override
   bool updateShouldNotify(PortalEnvironment oldWidget) =>
-      demoMode != oldWidget.demoMode;
+      prototypePreview != oldWidget.prototypePreview;
 }
 
 class PortalScaffold extends StatelessWidget {
@@ -40,7 +40,7 @@ class PortalScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final demoMode = PortalEnvironment.demoModeOf(context);
+    final prototypePreview = PortalEnvironment.isPrototypePreview(context);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         leading: leading,
@@ -72,9 +72,9 @@ class PortalScaffold extends StatelessWidget {
                   const SizedBox(width: PortalTokens.space2),
                   Expanded(
                     child: Text(
-                      demoMode
-                          ? 'Demo only · Sample data; no real hostel requests or payments are sent.'
-                          : 'Live mode · Signed-in account; warden access is server-assigned.',
+                      prototypePreview
+                          ? 'Prototype preview · Sample changes stay in this session; nothing is sent to hostel staff.'
+                          : 'Connected prototype · Changes use your signed-in account; warden access is server-assigned.',
                       style: TextStyle(
                         color: context.primaryText,
                         fontSize: 12,

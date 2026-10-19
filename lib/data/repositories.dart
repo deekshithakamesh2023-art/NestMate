@@ -77,6 +77,8 @@ class MockPortalRepository
       : _clock = clock ?? DateTime.now;
 
   final DateTime Function() _clock;
+  final List<String> mealFeedbackMessages = [];
+  final List<String> laundryPickupRequests = [];
   final List<ResidentRequest> _requests = [
     ResidentRequest(
       id: 'NM-2048',
@@ -94,6 +96,15 @@ class MockPortalRepository
       createdAt: DateTime(2026, 10, 14),
       departure: DateTime(2026, 10, 19),
       returnAt: DateTime(2026, 10, 20),
+    ),
+    ResidentRequest(
+      id: 'NM-2036',
+      title: 'Bathroom tap leak',
+      details: 'The tap near the sink was dripping.',
+      status: RequestStatus.resolved,
+      createdAt: DateTime(2026, 10, 10),
+      category: ComplaintCategory.maintenance,
+      assignee: 'Facilities team',
     ),
   ];
 
@@ -149,10 +160,14 @@ class MockPortalRepository
       ];
 
   @override
-  Future<void> sendMealFeedback(String message) async {}
+  Future<void> sendMealFeedback(String message) async {
+    mealFeedbackMessages.add(message);
+  }
 
   @override
-  Future<void> requestLaundryPickup(String instructions) async {}
+  Future<void> requestLaundryPickup(String instructions) async {
+    laundryPickupRequests.add(instructions);
+  }
 
   @override
   Future<List<PortalNotice>> notices() async => [
