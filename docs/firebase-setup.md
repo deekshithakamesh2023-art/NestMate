@@ -1,6 +1,6 @@
 # Firebase setup
 
-The app uses Firebase only when all required public client configuration values are supplied. Without them it runs the labeled in-memory demo. Never put a Firebase Admin SDK service-account key in this Flutter app or repository.
+The app uses Firebase when all required public client configuration values are supplied. Without them it runs the labeled in-memory prototype preview; its sample changes are not sent to hostel staff or persisted after the app session ends. Never put a Firebase Admin SDK service-account key in this Flutter app or repository.
 
 ## Configure a project
 
